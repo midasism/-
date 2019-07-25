@@ -103,9 +103,7 @@
 ### 4.1 遍历列表
 
 a=[x,y,z]
-
 for xx in a :  //xx 为临时变量   xxxx为语句    可遍历整个列表
-
 ​	xxxx
 
 * for循环中每个执行的代码都需要缩进
@@ -165,20 +163,13 @@ for xx in a :  //xx 为临时变量   xxxx为语句    可遍历整个列表
 * 格式：
 
   * if conditional_test:
-
-  ​					do something
-
-  ​		else:
-
-  ​					do something
-
+  	​					do something
+  	​		else:
+  	​					do something
   * if conditional_test:
-
-  ​					do something
-
-  ​		elif conditional_test:
-
-  ​					do something
+  	​					do something
+  	​		elif conditional_test:
+  	​					do something
 
 * 判断是否相等： ==
 * 检查多个条件：
@@ -209,7 +200,55 @@ for xx in a :  //xx 为临时变量   xxxx为语句    可遍历整个列表
 
 ​			   input(“提示信息”)  提示信息可有可无
 
+* while :
+  * 可处理列表：a=['a','b','c']
+    ​					   b=[]
+    ​					   while b : 
+    ​					   	temp=a.pop()
+    ​					  	 a.append(temp)
 
 
 
+### 8. 函数
+
+* 定义函数
+
+  * def  name（）：
+  	​		do something
+
+  * def  name（参数1，...）：
+    ​       do something
+
+* 文档注释： ''' 内容 '''
+
+* 传递参数
+	注：参数可为列表，若想禁止函数修改原始列表，可使用 list_name[:]创建列表的副本，再传入函数
+	
+  * 位置实参：调用函数时，传入的参数与函数定义时的参数一一对应
+  * 关键字实参：参数为键-值对，无需考虑传入顺序
+		例：dog（color='white',...）
+	
+* 参数默认值：参数若指定了默认值，调用函数时若提供了值，则参数等于传入值，否则为默认值  
+  * 用法：def dog（color='white',brand,...）：
+  
+* 传递任意数量的参数：
+	可与普通参数混用，但任意参数应放在末尾
+  * 普通参数：def dog（*name）
+  * 键-值对 : def dog (**name)
+  
+* 函数返回值：return语句 可返回任何类型的值（包括列表、字典等复杂的数据结构）
+
+* 导入：import
+  * 可导入整个模块，也可导入特定函数
+  * 给函数或模块指定别名：from a import dog as d 
+  					  import dog as d
+  * 导入模块中的所有函数：from a import *
+
+* 函数编写指南： 
+  * 给形参指定默认值、使用关键字实参时，等号两边不要有空格
+  * import语句应放在文件开头 
+
+
+
+### 9. 类
 
