@@ -117,10 +117,6 @@ char类型的字面值用单引号括起来
 1. 检查哪些Unicode字符属于Java中的“字母”：用Character类的 isJavaIdentifierStart（检查字符是否可作为标识符的第一个字符） 和 isJavaIdentifierPart（检查字符是否可作为标识符的一部分，而不是开头） 方法
 2. $ 是合法的Java字符，但不要在代码中使用
 
-#### 3.4.1 变量初始化
-
-1. 变量使用前必须初始化
-2. 变量的声明尽可能地靠近第一次使用的地方（良好的程序编写风格）
 
 #### 3.4.2 常量
 
@@ -162,9 +158,8 @@ char类型的字面值用单引号括起来
 
 Math.round（）仍需使用（int）：因为round返回结果为long类型
 
-1. 使用（）：例如，（int）4.5=4
-2. 对浮点数舍入运算（四舍五入），得到最接近的整数：Math.round（）
-3. 不要在boolean类型与任何数值类型直接强制转换，除非使用条件表达式 b ？1 : 0
+1. 对浮点数舍入运算（四舍五入），得到最接近的整数：Math.round（）
+2. 不要在boolean类型与任何数值类型直接强制转换，除非使用条件表达式 b ？1 : 0
 
 #### 3.5.4 结合赋值和运算符
 
@@ -293,9 +288,9 @@ Math.round（）仍需使用（int）：因为round返回结果为long类型
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20190902001903633.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU0OTE0OA==,size_16,color_FFFFFF,t_70)
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20190902001932491.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU0OTE0OA==,size_16,color_FFFFFF,t_70)
 
-* 可以使用 s 转换符格式化任意的对象,， 对于任意实现了 Formattable 接口的对象都将调用 formatTo 方法； 否则将调用 toString 方法， 它可以将对象转换为字符串。 
+* 可以使用 s 转换符格式化任意的对象,， 对于任意实现了 Formattable 接口的对象都将调用 formatTo 方法； 否则将调用 toString 方法， 它可以将对象转换为字符串
 
-* Date类格式化时间已过时，因使用java.time包的方法
+* Date类格式化时间已过时，应该使用java.time包的方法
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20190902001957955.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU0OTE0OA==,size_16,color_FFFFFF,t_70)
 
@@ -349,8 +344,6 @@ Math.round（）仍需使用（int）：因为round返回结果为long类型
 * 如果希望循环体至少执行一次，用do/while 语句，先执行，再检测条件：
   * do  statement  while  （condition）；
 
-2. for循环语句：
-   * 如果在内部定义变量，这个变量不能在循环体外使用
 
 #### 3.8.5 多重选择：switch语句
 
@@ -585,7 +578,7 @@ Math.round（）仍需使用（int）：因为round返回结果为long类型
 
 
 ### 4.8 类路径
-* 类文件可以存储到JAR（Java归档）文件中
+* 类文件可以存储到 JAR（Java归档）文件中
 * 一个JAR文件，可以包含多个压缩形式的类文件和子目录，节省空间、改善性能
 *  默认java虚拟机要从classpath环境变量的路径中搜索class文件去执行，对于java虚拟机来说，这不是类文件，而是类。它只有类路径，而没有文件系统路径
 * **javac编译器搜索的是文件路径，和环境变量classpath无关**
@@ -601,3 +594,87 @@ Math.round（）仍需使用（int）：因为round返回结果为long类型
 * 编译器定位文件比虚拟机复杂：
 1. 如果引用一个类，而没有指出这个类所在的包，那么编译器首先查找包含这个类的包，并查询所有的import指令，确定是否包含被引用的类
 2. 编译器查看源文件是否比类文件新，如果新，就自动地重新编译
+
+#### 4.8.1 设置类路径
+* 建议使用 -classpath（-cp）选项指定类路径：
+java -classpath /home/user/classdir ; . ; /home/user/archives/archive.jar Myprog
+* 也可以设置环境变量：（Windows）set CLASSPATH=c:\classdir ; . ; c:\archives\archive.jar
+直到退出shell为止，类路径设置均有效
+
+
+### 4.9 文档注释
+* javadoc：由源文件生成一个HTML文件
+
+#### 4.9.1 注释的插入
+* 每个/ * * ... */ 文档注释在标记之后紧跟自由格式文本
+* 自由格式文本：
+	* 第一句应该是一个概要性的句子，javadoc程序自动将这些句子取出形成概要页
+	* 可以使用HTML标签（不要使用<h1>或<hr>，会和文档格式起冲突）
+* 注：如果在文档中有到其他文件的链接，应该把这些文件放到子目录 doc-files中（javadoc程序将从源目录拷贝这些目录及其中的文件到文档目录中）
+在链接中需要使用doc-files目录
+
+#### 4.9.2 类注释
+* 类注释必须放在import语句后，类定义前
+
+#### 4.9.3 方法注释
+* @param 变量描述：
+	* 对当前方法的“param”（参数）部分添加一个条目
+	* 可以占据多行，并可以使用HTML标记
+	* 一个方法的所有@param标记必须放在一起
+
+* @return 描述：
+	* 对当前方法添加“return”部分
+	* 可以跨越多行，并可以使用HTML标记
+
+* @throws 类描述：
+	* 添加一个注释，表示这个方法有可能抛出异常
+
+#### 4.9.5 通用注释
+* 适用类文档注释
+	* @author 姓名：（可以使用多个）每个标记对应一个作者
+	* @version 文本：可以是对当前版本的任何描述
+
+* 适用所有文档注释
+	* @since 文本：可以是对引入特性的版本描述
+	例：@since version 1.7.10
+	* @deprecated 文本：对类、方法或变量添加一个不再使用的注释，文本中给出了取代的建议
+
+* @see 引用：添加一个超链接，可以用于类或方法(可以添加多个，但必须放在一起)
+	1. package.class#feature label
+	* 只要提供类、方法或变量的名字，javadoc就在文档中插入一个超链接
+	* 一定要使用 # 代替 . 分隔类名和方法名，或类名和变量名
+	
+	2. <a  href=“...”>label</a>
+	3. "text"
+
+* @link：可以在注释中的任何位置放置指向其他类或方法的超链接，以及插入一个专用的标记
+	例：{@link  package.class#feature label}   规则与 @see 一样
+
+#### 4.9.6 包注释
+
+* 想要产生包注释，需要在每一个包目录中添加一个单独的文件，两个选择：
+	1. 提供一个以package.html命名的HTML文件
+	在标记<body>...</body>之间的所有文本都会被抽取出来
+	2. 提供一个以package-info.java命名的Java文件
+	这个文件必须包含一个初始的以/ * * 和 * / 界定的Javadoc注释，跟随在一个包语句之后（它不应该包含更多的代码或注释）
+
+* 可以为所有的源文件提供一个概述性的注释
+	这个注释被放置在一个名为overview.html的文件，这个文件位于包含所有源文件的父目录下
+	
+#### 4.9.7 注释的抽取
+* 指令：
+	1. -d<directory>:指定一个路径，用于将生成的API文档放到该目录下
+	2. -windowtitle<text>:指定一个字符串，用于设置API文档的浏览器窗口标题
+	3. -doctitle:<html-code>:指定一个HTML的文本，用于指定概述页面的标题
+	4. -header<text>:指定浏览器左半部分包列表头标题显示
+
+更多详见：https://blog.csdn.net/u011479200/article/details/78554836
+
+
+
+### 第5章 继承
+
+* super：指示编译器调用超类方法的特殊关键字
+* 使用super调用构造器的语句必须是子类构造器的第一条语句
+* 如果子类构造器没有显式地调用超类的构造器，则自动地调用超类默认（没有参数）的构造器
+* 
