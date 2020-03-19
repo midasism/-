@@ -674,7 +674,187 @@ java -classpath /home/user/classdir ; . ; /home/user/archives/archive.jar Myprog
 
 ### 第5章 继承
 
-* super：指示编译器调用超类方法的特殊关键字
+* super：指示编译器调用超类方法的特殊关键字（不是一个对象的引用）
 * 使用super调用构造器的语句必须是子类构造器的第一条语句
-* 如果子类构造器没有显式地调用超类的构造器，则自动地调用超类默认（没有参数）的构造器
-* 
+* 如果子类构造器没有显式地调用超类的构造器，则自动地调用超类默认（没有参数）的构造器（若超类没有空构造器，则报错）
+
+#### 5.1.4 继承层次
+
+* 继承层次：由一个公共超类派生出的所有类的集合
+* 继承链：在继承层次中，从某个特定的类到其祖先的路径
+
+#### 5.1.5 多态
+
+* 多态：同一种行为具有不同表现形式或形态
+* 对象变量是多态的
+
+#### 5.1.6 方法调用
+
+1. 编译器查看对象的声明类型和方法名。编译器列举所有该对象类中同名的方法和其超类中访问属性为public且同名的方法（超类的私有方法不可访问）
+2. 编译器查看调用方法时提供的参数类型。如果在所有同名的方法中存在一个与提供的参数类型完全匹配，就选择这个方法（重载解析）
+
+* **动态绑定和静态绑定（方法调用机制）**：https://blog.csdn.net/weixin_43549148/article/details/100687800
+
+* private方法、static方法、final方法和构造器：静态绑定
+* 每次调用方法都要搜索，时间开销很大。所以虚拟机预先为每一个类创建了一个**方法表**，列出了所有方法的签名（方法名+参数列表）和实际调用的方法
+
+#### 5.1.7 阻止继承：final类和方法
+* final类：不允许被扩展（继承）的类
+* final类中的所有方法自动成为final方法
+* 用final修饰的方法，子类不能覆盖
+* 如果方法很简短、被频繁调用且没有真正地被覆盖，那么即时编译器就会将这个方法**内联**处理。如果虚拟机加载了另外一个子类，而在这个子类中包含了对内联方法的覆盖，那么优化器将取消对覆盖方法的内联
+* 内联：把目标方法的代码“复制”到发起调用的方法中，避免真正的方法调用，减少性能开销
+详见：
+1. https://blog.csdn.net/weixin_43549148/article/details/100689531
+2. 《深入理解Java虚拟机（第二版）》: P352~354
+
+#### 5.1.8 强制类型转换
+* 对象进行类型转换时：
+	* 只能在继承层次内进行类型转换
+	* 将超类转化为子类之前，应该使用instanceof进行检查
+	 instanceof关键字详解：https://blog.csdn.net/weixin_43549148/article/details/100920160
+
+#### 5.1.9 抽象类
+* 包含一个或多个抽象方法的类本身必须被声明为抽象的
+* 抽象类还可以包含具体数据和具体方法
+* 类即使不含抽象方法，也可以将类声明为抽象类
+* 抽象类不能被实例化
+* 可以定义一个抽象类的对象变量，但是它只能引用非抽象子类的对象
+
+#### 5.1.10 受保护访问
+
+* 任何声明为private的内容对其他类都是不可见的（子类也不能访问超类的私有域）
+* 若想超类中某些方法或域允许被子类访问，可以声明为protected（不建议标记域）
+* 4个访问修饰符归纳：
+  * private——仅对本类可见
+  * public——对所有类可见
+  * protected——对本包和所有子类可见
+  * 默认——对本包可见
+
+
+### 5.2 Object：所有类的超类
+* Object类是Java中所有类的始祖
+* Java中，只有基本类型不是对象
+
+#### 5.2.1 equal方法
+* Object中的equals方法用于检测一个对象是否等于另外一个对象（是否具有相同的引用，一般没什么意义）
+* 在重写equals方法时，防止比较双方可能为null的情况，应使用Objects.equals方法
+如果两个参数都为null，Object.equals（a，b）返回true；如果其中一个参数为null，返回false；如果两个参数都不为null，则调用a.equals（b）
+* 编写equals方法的建议：
+	1. 显式参数命名为otherObject（稍后需要将它转化为一个叫other的变量）
+	2. 检测this和otherObject是否引用同一个对象：
+		if（this == otherObject） return true；
+	3. 检测otherObject是否为null，如果为null，返回false
+		if（otherObject == null） return false；
+	4. 比较this和otherObject是否属于同一个类
+	* 如果equals的语义在每个子类中有所改变，就是用getClass检测：
+		if（getClass()  !=  otherObject . getClass())） return false；
+		
+	* 如果所有子类都拥有统一的语义，就使用instanceof检测：
+	if（！（otherObject instanceof ClassName）） return false；
+
+  5. 将otherObject转换为相应的类类型变量：
+      ClassName other = （ClassName）otherObject；
+  6. 使用 == 比较基本类型域，使用equals比较对象域。如果都匹配，返回true
+  
+* 数组类型的域可以使用静态的Arrays.equals检测数组元素是否相等
+
+#### 5.2.3 hashCode方法
+* 散列码：由对象导出的一个整型值
+* 由于hashCode方法定义在Object类中，每个对象都有一个默认的散列码，其值为对象的存储地址
+* 调用hashCode方法时，最好使用null安全的方法Objects.hashCode（如果参数为null，返回0，否则返回对参数调用hashCode的结果）
+* 还可以调用包装类的静态方法hashCode来避免创建对象
+* 需要组合多个散列值时，可以调用Objects.hash并提供多个参数（这个方法会对各个参数调用Objects.hashCode，并组合这些散列值）
+
+
+#### 5.2.4 toString方法
+* 可以通过调用getClass().getName()获得类名
+* 只要对象与一个字符串通过 + 连接，就会自动地调用toString方法
+* 如果想打印数组元素，可以使用Arrays.toString（多维数组使用Arrays.deepToString）
+
+
+### 5.3 泛型数组列表
+* ArrayList：底层是Object数组，所以具有数组的查询速度快的优点以及增删速度慢的缺点
+* LinkedList：双向循环链表实现，查询效率低但是增删效率高
+	* 可以使用toArray方法将数组存入List中
+	* 可以用foreach遍历：
+		for（Object e：arr）
+			do something with e
+	* 添加元素：add（）
+	* 删除元素：remove（）
+	* 获取个数：size（）
+
+
+### 5.4 对象包装器与自动装箱
+* 为了某些需求，所有的基本类型都有对应的包装类（泛型数组列表的类型参数不允许为基本类型，而应该是对应的包装类）
+int-Integer   long-Long   float-Float    double-Double    short-Short   byte-Byte
+char-Character    void-Void    boolean-Boolean（前六个类派生于公共的超类Number）
+* 对象包装器类不可变（一旦构造了包装器，就不允许更改包装在其中的值）
+* 对象包装器为final，不能定义子类
+
+#### 自动装箱
+* 自动装箱：当使用泛型数组时，如果直接使用add（）添加基本类型，会自动将基本类型转化为包装类再添加进去
+list.add(3) == list.add(Integer.valueOf(3))
+* 自动拆箱：将一个包装类对象赋给一个基本类型变量
+int n = list.get（i）  ==   int n = list.get(i).intValue()
+* 在算术表达式中也可以自动地装箱、拆箱（Integer自加：先拆箱，再装箱）
+* java为了节省内存开销，将经常出现的值包装到同一个对象（比较包装器对象时，不建议使用==，而使用equals）
+boolean、byte、char<=127，介于-128~127之间的short和int
+* 装箱和拆箱是编译器认可的，而不是虚拟机。编译器在生成类的字节码时，插入必要的方法调用，虚拟机只是执行
+* 将数字字符串转为数值：
+	* java：Integer.parseInt（s） 静态方法
+	* C++：s - '0'
+* 如果想编写修改数值参数值的方法，需要使用 org.omg.CORBA包中定义的持有者（holder）类型，包括IntHolder、BooleanHolder等。每个持有者类型都含有一个公有域值，通过它可访问储存在里面的值
+	public static void triple(IntHolder x){
+		x.value=3*x.value;
+	}
+
+### 5.5 参数数量可变的方法
+* 方法中的参数可为省略号… ：表明方法可接受任意数量的实参
+void sum(int… nums){}   相当于传入一个数组
+sum(1,2,3) / sum(1,2,3,4,5,6)
+
+### 5.6 枚举类
+* 所有的枚举类型都是Enum类的子类
+* toString：返回枚举常量名
+* toString的逆方法：valueOf（Class enumClass，String name）
+* 静态的values：返回一个包含全部枚举值的数组
+* ordinal：返回enum声明中枚举常量的位置（从0开始）
+
+深入了解枚举：https://blog.csdn.net/javazejian/article/details/71333103
+
+
+### 5.7 反射
+反射可以用来：
+* 在运行时分析类的能力
+* 在运行时查看对象，例如编写toString方法供所有类使用
+* 实现通用的数组操作代码
+* 利用Method对象，很像C++中的函数指针
+
+#### 5.7.1 Class类
+* 程序运行期间，Java运行时系统始终为所有的对象维护一个被称为运行时的类型标识。虚拟机利用运行时类型信息选择相应的方法执行。
+保存这些信息的类称为Class
+* 获得Class类对象：
+	1. Object类中的getClass（）：返回一个Class类型的实例
+	2. 可以调用静态方法forName获得类名对应的Class对象
+		String ClassName = “java.util.Random”；
+		Class cl = Class.forName（className）；
+		* 如果className不是类名或接口名，抛出checkedexception（已检查异常）
+		* 使用这个方法必须提供一个异常处理器
+	3. T.class代表匹配的类对象（T是任意的Java类型或者 void 关键字）
+		* 一个Class对象实际上表示的是一个类型，而该类型未必是类（ int.class ）
+* 最常用的Class方法是getName：返回类的名字（如果类在包中，包名也作为类名的一部分）
+	警告：历史原因，getName在用于数组类型时，会返回一个奇怪的名字
+* Class类实际上是泛型类（T.class = Class<T>），一般省略
+* 可以使用 == 实现两个类对象的比较操作
+if（ e.getClass() == T.class ）...
+
+#### 5.7.3 利用反射分析类的能力
+* java.lang.reflect包中的三个类Field、Method、Constructor分别描述域、方法和构造器
+* getName：返回项目名称
+* getType（Field中）：返回描述域所属类型的Class对象
+* getModifiers：返回一个整型数值，用不同的位开关描述修饰符使用状况（public、static...）
+用reflect包中的Modifier类的静态方法分析上述返回值：isPublic、isPrivate...
+Modifier.toString：打印修饰符
+* Class类中的getFields、getMethods和getConstructors：分别返回类提供的public域、方法和构造器数组（包括超类的公有成员）
+* Class类的getDeclareFields、getDeclareMethods和getDeclaredConstructors：返回类中声明的全部域、方法和构造器（包括私有和受保护成员，但不包括超类的成员）

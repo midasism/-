@@ -54,3 +54,29 @@
         return true;
     }
 ```
+
+
+
+* toString的默认实现会返回一个对象内存地址的字符串
+
+#### equal（）模板
+
+1. 如果该对象的引用和参数对象的引用相同，返回 true
+2. 如果参数为空（null），返回false（还可以避免在下面的代码使用空引用）
+3. 如果两个对象的类不同，返回false（getClass（）获取类，==判断）
+4. 将参数对象的类型从Object转化为使用equal（）方法的对象的类型
+5. 如果任意实例变量的值不同，返回false
+代码：
+```
+    public boolean equals(Object x) {
+        if (this == x) return true;
+        if (x == null) return false;
+        if (this.getClass() == x.getClass()) return false;
+        ...
+    }
+```
+
+#### 答疑
+
+* java中易错、重要的的知识点，查漏补缺
+* 详见P69~P71
